@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+        *{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+:root{
+    --main-col: gray;
+}
+body{
+    background-color: var(--main-col);
+}
+.container{
+    margin-top: 100px;
+    height: 100vh;
+    width:100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.search{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-left: 40px;
+    border: 7px solid lightgray;
+    width: 75%;
+    height: 200px
+}
+h1{
+    margin: 30px 0;
+    text-transform: uppercase;
+}
+input, button{
+    font-size: 250%;
+}
+.theme{
+    margin: 40px 0;
+    padding: 10px 0;
+    width: 50%;
+    display: flex;
+    justify-content: space-evenly;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    background-color: white;
+}
+.theme-color{
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+
+}
+input[type="radio"] {
+    height: 2rem;
+    width: 2rem;
+    border: 2px solid;
+    border-radius: 50%;
+}
+#movie{
+    width: 75%;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    border: 3px solid lightgray;
+}
+.image{
+    width:300px;
+    height:400px;
+}
+img{
+    min-width: 100%;
+    min-height: 100%;
+    object-fit: cover;
+}
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="search">
+        <h1>search the movies here</h1>
+        <form>
+          <input type="text" id="sL" name="val" placeholder="search here" />
+          <button type="submit" id="sit">Search</button>
+        </form>
+      </div>
+      <div class="theme">
+        <form class="theme-color">
+          <input type="radio" name="the" id="gray" checked />
+          <input type="radio" name="the" id="blue" />
+          <input type="radio" name="the" id="aqua" />
+          <input type="radio" name="the" id="brown" />
+          <input type="radio" name="the" id="black" />
+        </form>
+      </div>
+      <div id="movie"></div>
+    </div>
+    <script>
+        let th=document.querySelectorAll("input[name='the']");
+const u="https://api.tvmaze.com/search/shows?q=";
+
+th.forEach((demo)=>{
+    demo.addEventListener('click',(e)=>{
+        if(e.target.id==="black")
+            document.querySelector(".search h1").style.color="white";
+        else
+            document.querySelector(".search h1").style.color="black";
+        document.querySelector(":root").style.setProperty('--main-col',demo.id);
+        localStorage.setItem('color',demo.id);
+    });
+});
+
+window.addEventListener('load',()=>{
+    let the=localStorage.getItem('color');
+    document.querySelector(":root").style.setProperty('--main-col',the);
+    let check=document.getElementById(the);
+    check.checked=true;
+});
+
+/* API call */
+btn=document.getElementById("sit");
+btn.addEventListener("click",(e)=>{
+    if(document.getElementById("movie").childNodes.length>0){
+        removeAllChildNodes(document.getElementById("movie"));
+    }
+    e.preventDefault();
+    let tosearch=document.getElementById("sL").value;
+    document.getElementById("sL").value="";
+    fetch(u+tosearch).then((res)=>{
+        return res.json();
+    }).then((data)=>{
+        displayI(data);
+    });
+});
+
+function displayI(data){
+    data.forEach((demo)=>{
+        let div=document.createElement("div");
+        let img=document.createElement("img");
+        img.setAttribute("src",demo.show.image.original);
+        img.setAttribute("width","300px");
+        img.setAttribute("height","500px");
+        div.appendChild(img);
+        div.className="image";
+        document.getElementById("movie").appendChild(div);
+    });
+}
+function removeAllChildNodes(p) {
+    while (p.firstChild) {
+        p.removeChild(p.firstChild);
+    }
+}
+
+    </script>
+  </body>
+</html>
